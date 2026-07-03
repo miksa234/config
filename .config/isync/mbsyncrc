@@ -133,6 +133,33 @@ MaxMessages 0
 ExpireUnread no
 # End profile
 
+IMAPStore hello@oari.io-remote
+Host mail.privateemail.com
+Port 993
+User hello@oari.io
+PassCmd "pass hello@oari.io"
+AuthMechs LOGIN
+# SSLType IMAPS
+TLSType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+MaildirStore hello@oari.io-local
+Subfolders Verbatim
+Path ~/.local/share/mail/6-hello@oari.io/
+Inbox ~/.local/share/mail/6-hello@oari.io/INBOX
+Flatten .
+
+Channel hello@oari.io
+Expunge Both
+Far :hello@oari.io-remote:
+Near :hello@oari.io-local:
+Patterns * !"[Gmail]/All Mail"
+Create Both
+SyncState *
+MaxMessages 0
+ExpireUnread no
+# End profile
+
 #IMAPStore a11807930@unet.univie.ac.at-remote
 #Host imap.univie.ac.at
 #Port 993
@@ -145,8 +172,8 @@ ExpireUnread no
 #
 #MaildirStore a11807930@unet.univie.ac.at-local
 #Subfolders Verbatim
-#Path ~/.local/share/mail/6-a11807930@unet.univie.ac.at/
-#Inbox ~/.local/share/mail/6-a11807930@unet.univie.ac.at/INBOX
+#Path ~/.local/share/mail/7-a11807930@unet.univie.ac.at/
+#Inbox ~/.local/share/mail/7-a11807930@unet.univie.ac.at/INBOX
 #Flatten .
 #
 #Channel a11807930@unet.univie.ac.at

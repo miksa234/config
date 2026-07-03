@@ -39,6 +39,13 @@ from milutin@oari.io
 user milutin@oari.io
 passwordeval "pass milutin@oari.io"
 
+account hello@oari.io
+host mail.privateemail.com
+port 587
+from hello@oari.io
+user hello@oari.io
+passwordeval "pass hello@oari.io"
+
 #account a11807930@unet.univie.ac.at
 #host mail.univie.ac.at
 #port 465

@@ -15,7 +15,9 @@ macro index,pager i4 '<sync-mailbox><enter-command>source ~/.config/mutt/account
 
 macro index,pager i5 '<sync-mailbox><enter-command>source ~/.config/mutt/accounts/5-info@ponnect.rs.muttrc<enter><enter-command>source ~/.config/mutt/mailboxes<enter><change-folder>!<enter>;<check-stats>' "switch to info@ponnect.rs"
 
-macro index,pager i6 '<sync-mailbox><enter-command>source ~/.config/mutt/accounts/6-a11807930@unet.univie.ac.at.muttrc<enter><enter-command>source ~/.config/mutt/mailboxes<enter><change-folder>!<enter>;<check-stats>' "switch to a11807930@unet.univie.ac.at"
+macro index,pager i6 '<sync-mailbox><enter-command>source ~/.config/mutt/accounts/6-hello@oari.io.muttrc<enter><enter-command>source ~/.config/mutt/mailboxes<enter><change-folder>!<enter>;<check-stats>' "switch to hello@oari.io"
+
+macro index,pager i7 '<sync-mailbox><enter-command>source ~/.config/mutt/accounts/7-a11807930@unet.univie.ac.at.muttrc<enter><enter-command>source ~/.config/mutt/mailboxes<enter><change-folder>!<enter>;<check-stats>' "switch to a11807930@unet.univie.ac.at"
 
 set signature = $XDG_CONFIG_HOME/mutt/signature
 
