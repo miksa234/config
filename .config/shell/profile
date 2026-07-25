@@ -6,7 +6,7 @@ export PATH="$PATH:$HOME/.local/share/firefox"
 
 # Default Programs:
 export EDITOR="nvim"
-export TERMINAL="st"
+export TERMINAL="ghostty"
 export BROWSER="firefox"
 
 # ~/ Clean-up: XDG-Base-Directory Specs.
