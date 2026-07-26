@@ -1,6 +1,6 @@
 # Mika's dotfiles
 
-What i use:
+Some of what i use:
 * x11
 * dwm
 * st
