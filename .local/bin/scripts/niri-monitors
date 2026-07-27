@@ -3,8 +3,9 @@
 MONITOR_OUT=${MONITOR_OUT:-0}
 
 mon_n="BOE 0x0BCA Unknown"
-mon_l="PNP(BNQ) BenQ GL2760 H3E04203019"
-mon_r="PNP(BNQ) BenQ GL2760 SCF04101019"
+mon_l="Philips Consumer Electronics Company 27E1N1200A UHB2549032242"
+mon_r="Philips Consumer Electronics Company 27E1N1200A UHB2549032244"
+
 
 move_workspaces() {
     monitor=$1
@@ -50,7 +51,7 @@ mulmon_deactivate() {
 }
 
 active_connection() {
-    count=$(niri msg outputs | grep -E "H3E04203019|SCF04101019" | wc -l | tr -d ' ')
+    count=$(niri msg outputs | grep -E "UHB2549032242|UHB2549032244" | wc -l | tr -d ' ')
     [ "$count" -eq 2 ]
 }
 
