@@ -3,7 +3,7 @@
 MONITOR_OUT=${MONITOR_OUT:-0}
 
 mon_n="BOE 0x0BCA Unknown"
-mon_l="PNP(LTM) LCD 0x01010101"
+mon_l="Philips Consumer Electronics Company 27E1N1200A UHB2549032242"
 mon_r="Philips Consumer Electronics Company 27E1N1200A UHB2549032244"
 
 
@@ -51,7 +51,7 @@ mulmon_deactivate() {
 }
 
 active_connection() {
-    count=$(niri msg outputs | grep -E "0x01010101|UHB2549032244" | wc -l | tr -d ' ')
+    count=$(niri msg outputs | grep -E "UHB2549032242|UHB2549032244" | wc -l | tr -d ' ')
     [ "$count" -eq 2 ]
 }
 
