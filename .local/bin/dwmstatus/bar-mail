@@ -20,8 +20,8 @@ then
 fi
 
 case $BLOCK_BUTTON in
-	1) setsid -f "$TERMINAL" -e neomutt ;;
-	2) pkill -RTMIN+3 dwmblocks && setsid -f mbsync -a ;;
+	1) setsid -f "$TERMINAL" -e "$EDITOR" -c Notmuch ;;
+	2) pkill -RTMIN+3 dwmblocks && setsid -f mbsync -a && notmuch new ;;
 	6) "$TERMINAL" -e "$EDITOR" "$0" ;;
 esac
 

@@ -110,7 +110,7 @@ IMAPStore milutin@oari.io-remote
 Host mail.privateemail.com
 Port 993
 User milutin@oari.io
-PassCmd "pass milutin@oari.io"
+PassCmd "pass milutin@oari.io-mail"
 AuthMechs LOGIN
 # SSLType IMAPS
 TLSType IMAPS
@@ -137,7 +137,7 @@ IMAPStore hello@oari.io-remote
 Host mail.privateemail.com
 Port 993
 User hello@oari.io
-PassCmd "pass hello@oari.io"
+PassCmd "pass hello@oari.io-mail"
 AuthMechs LOGIN
 # SSLType IMAPS
 TLSType IMAPS

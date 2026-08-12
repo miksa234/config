@@ -1,0 +1,15 @@
+[database]
+path=/home/mika/.local/share/mail
+
+[user]
+name=Milutin Popovic
+primary_email=milutin@popovic.xyz
+other_email=milutin@ponnect.rs;milutin@oari.io;mika@popovic.xyz;info@ponnect.rs;hello@oari.io;a11807930@unet.univie.ac.at
+
+[new]
+ignore=.notmuch;
+
+[search]
+exclude_tags=deleted;spam
+
+[maildir]
