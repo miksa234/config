@@ -1,0 +1,83 @@
+#!/usr/bin/env sh
+
+exec 9>/tmp/niri-monitors.lock
+flock -n 9 || exit 0
+
+last_power=""
+
+mon_n="BOE 0x0BCA Unknown"
+mon_l="Philips Consumer Electronics Company 27E1N1200A UHB2549032242"
+mon_r="Philips Consumer Electronics Company 27E1N1200A UHB2549032244"
+
+move_workspaces() {
+    monitor=$1
+    direction=$2
+
+    for nw in $(seq 1 9); do
+        niri msg action \
+            move-workspace-to-monitor \
+            --reference "${direction}${nw}" \
+            "$monitor"
+    done
+
+    niri msg action focus-monitor "$monitor"
+
+    for nw in $(seq 1 9); do
+        niri msg action \
+            move-workspace-to-index \
+            --reference "${direction}${nw}" \
+            "${nw}"
+    done
+}
+
+mulmon_activate() {
+    niri msg output "$mon_l" on
+    niri msg output "$mon_r" on
+    move_workspaces "$mon_l" "l"
+    move_workspaces "$mon_r" "r"
+    niri msg output "$mon_n" off
+}
+
+mulmon_deactivate() {
+    niri msg output "$mon_n" on
+    move_workspaces "$mon_n" "r"
+    move_workspaces "$mon_n" "l"
+    niri msg output "$mon_l" off
+    niri msg output "$mon_r" off
+}
+
+set_power_profile() {
+    ac_online=$(cat /sys/class/power_supply/ACAD/online 2>/dev/null || echo 0)
+    want="balanced"
+    [ "$ac_online" = "1" ] && want="performance"
+    if [ "$want" != "$last_power" ]; then
+        sudo powerprofilesctl set "$want"
+        last_power=$want
+    fi
+}
+
+while :; do
+    out=$(niri msg outputs 2>/dev/null) || {
+        sleep 5
+        continue
+    }
+
+    count=$(printf '%s\n' "$out" | grep -cE "UHB2549032242|UHB2549032244")
+    externals=$([ "$count" -eq 2 ] && echo 1 || echo 0)
+
+    if printf '%s\n' "$out" | grep -A1 'BOE 0x0BCA' | grep -q 'Disabled'; then
+        internal_off=1
+    else
+        internal_off=0
+    fi
+
+    if [ "$externals" -eq 1 ] && [ "$internal_off" -eq 0 ]; then
+        mulmon_activate
+    elif [ "$externals" -eq 0 ] && [ "$internal_off" -eq 1 ]; then
+        mulmon_deactivate
+    fi
+
+    set_power_profile
+
+    sleep 5
+done
