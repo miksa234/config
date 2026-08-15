@@ -46,10 +46,10 @@ from hello@oari.io
 user hello@oari.io
 passwordeval "pass hello@oari.io-mail"
 
-#account a11807930@unet.univie.ac.at
-#host mail.univie.ac.at
-#port 465
-#from a11807930@unet.univie.ac.at
-#user milutinp00
-#passwordeval "pass mw-a11807930@unet.univie.ac.at"
-#tls_starttls off
+account a11807930@unet.univie.ac.at
+host mail.univie.ac.at
+port 465
+from a11807930@unet.univie.ac.at
+user milutinp00
+passwordeval "pass mw-a11807930@unet.univie.ac.at"
+tls_starttls off

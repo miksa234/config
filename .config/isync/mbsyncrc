@@ -160,29 +160,29 @@ MaxMessages 0
 ExpireUnread no
 # End profile
 
-#IMAPStore a11807930@unet.univie.ac.at-remote
-#Host imap.univie.ac.at
-#Port 993
-#User milutinp00
-#PassCmd "pass mw-a11807930@unet.univie.ac.at"
-#AuthMechs LOGIN
-## SSLType IMAPS
-#TLSType IMAPS
-#CertificateFile /etc/ssl/certs/ca-certificates.crt
-#
-#MaildirStore a11807930@unet.univie.ac.at-local
-#Subfolders Verbatim
-#Path ~/.local/share/mail/7-a11807930@unet.univie.ac.at/
-#Inbox ~/.local/share/mail/7-a11807930@unet.univie.ac.at/INBOX
-#Flatten .
-#
-#Channel a11807930@unet.univie.ac.at
-#Expunge Both
-#Far :a11807930@unet.univie.ac.at-remote:
-#Near :a11807930@unet.univie.ac.at-local:
-#Patterns * !"[Gmail]/All Mail"
-#Create Both
-#SyncState *
-#MaxMessages 0
-#ExpireUnread no
-## End profile
+IMAPStore a11807930@unet.univie.ac.at-remote
+Host imap.univie.ac.at
+Port 993
+User milutinp00
+PassCmd "pass mw-a11807930@unet.univie.ac.at"
+AuthMechs LOGIN
+# SSLType IMAPS
+TLSType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+MaildirStore a11807930@unet.univie.ac.at-local
+Subfolders Verbatim
+Path ~/.local/share/mail/7-a11807930@unet.univie.ac.at/
+Inbox ~/.local/share/mail/7-a11807930@unet.univie.ac.at/INBOX
+Flatten .
+
+Channel a11807930@unet.univie.ac.at
+Expunge Both
+Far :a11807930@unet.univie.ac.at-remote:
+Near :a11807930@unet.univie.ac.at-local:
+Patterns * !"[Gmail]/All Mail"
+Create Both
+SyncState *
+MaxMessages 0
+ExpireUnread no
+# End profile
