@@ -3,7 +3,14 @@
 exec 9>/tmp/niri-monitors.lock
 flock -n 9 || exit 0
 
+last_topology=""
+candidate_topology=""
+candidate_count=0
 last_power=""
+power_candidate=""
+power_candidate_count=0
+
+stable_samples=3
 
 mon_n="BOE 0x0BCA Unknown"
 mon_l="Philips Consumer Electronics Company 27E1N1200A UHB2549032242"
@@ -30,29 +37,97 @@ move_workspaces() {
     done
 }
 
-mulmon_activate() {
-    niri msg output "$mon_l" on
-    niri msg output "$mon_r" on
-    move_workspaces "$mon_l" "l"
-    move_workspaces "$mon_r" "r"
-    niri msg output "$mon_n" off
-}
+apply_topology() {
+    topology=$1
 
-mulmon_deactivate() {
-    niri msg output "$mon_n" on
-    move_workspaces "$mon_n" "r"
-    move_workspaces "$mon_n" "l"
-    niri msg output "$mon_l" off
-    niri msg output "$mon_r" off
+    case $topology in
+        laptop)
+            niri msg output "$mon_n" on || return 1
+            move_workspaces "$mon_n" "l"
+            move_workspaces "$mon_n" "r"
+            ;;
+        left)
+            niri msg output "$mon_n" on || return 1
+            niri msg output "$mon_l" on || return 1
+            move_workspaces "$mon_l" "l"
+            move_workspaces "$mon_n" "r"
+            ;;
+        right)
+            niri msg output "$mon_n" on || return 1
+            niri msg output "$mon_r" on || return 1
+            move_workspaces "$mon_n" "l"
+            move_workspaces "$mon_r" "r"
+            ;;
+        both)
+            niri msg output "$mon_l" on || return 1
+            niri msg output "$mon_r" on || return 1
+            move_workspaces "$mon_l" "l"
+            move_workspaces "$mon_r" "r"
+            niri msg output "$mon_n" off || return 1
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+
+    return 0
 }
 
 set_power_profile() {
     ac_online=$(cat /sys/class/power_supply/ACAD/online 2>/dev/null || echo 0)
     want="balanced"
     [ "$ac_online" = "1" ] && want="performance"
-    if [ "$want" != "$last_power" ]; then
-        sudo powerprofilesctl set "$want"
-        last_power=$want
+
+    if [ "$want" = "$last_power" ]; then
+        power_candidate=""
+        power_candidate_count=0
+        return
+    fi
+
+    if [ "$want" = "$power_candidate" ]; then
+        power_candidate_count=$((power_candidate_count + 1))
+    else
+        power_candidate=$want
+        power_candidate_count=1
+    fi
+
+    if [ "$power_candidate_count" -ge "$stable_samples" ]; then
+        if sudo powerprofilesctl set "$want"; then
+            last_power=$want
+            power_candidate=""
+            power_candidate_count=0
+        fi
+    fi
+}
+
+observe_topology() {
+    out=$1
+
+    left=0
+    right=0
+    printf '%s\n' "$out" | grep -Fq "$mon_l" && left=1
+    printf '%s\n' "$out" | grep -Fq "$mon_r" && right=1
+
+    if [ "$left" -eq 1 ] && [ "$right" -eq 1 ]; then
+        printf '%s\n' both
+    elif [ "$left" -eq 1 ]; then
+        printf '%s\n' left
+    elif [ "$right" -eq 1 ]; then
+        printf '%s\n' right
+    else
+        printf '%s\n' laptop
+    fi
+}
+
+record_candidate() {
+    observed=$1
+
+    if [ "$observed" = "$candidate_topology" ]; then
+        candidate_count=$((candidate_count + 1))
+    else
+        candidate_topology=$observed
+        candidate_count=1
+        printf 'niri-monitors: observed %s topology; waiting for stability\n' "$observed"
     fi
 }
 
@@ -62,19 +137,27 @@ while :; do
         continue
     }
 
-    count=$(printf '%s\n' "$out" | grep -cE "UHB2549032242|UHB2549032244")
-    externals=$([ "$count" -eq 2 ] && echo 1 || echo 0)
+    observed=$(observe_topology "$out")
 
-    if printf '%s\n' "$out" | grep -A1 'BOE 0x0BCA' | grep -q 'Disabled'; then
-        internal_off=1
+    if [ "$observed" = "$last_topology" ]; then
+        candidate_topology=""
+        candidate_count=0
     else
-        internal_off=0
-    fi
-
-    if [ "$externals" -eq 1 ] && [ "$internal_off" -eq 0 ]; then
-        mulmon_activate
-    elif [ "$externals" -eq 0 ] && [ "$internal_off" -eq 1 ]; then
-        mulmon_deactivate
+        record_candidate "$observed"
+        if [ "$candidate_count" -ge "$stable_samples" ]; then
+            verify=$(niri msg outputs 2>/dev/null) || verify=""
+            if [ "$(observe_topology "$verify")" = "$observed" ]; then
+                printf 'niri-monitors: applying %s topology\n' "$observed"
+                if apply_topology "$observed"; then
+                    last_topology=$observed
+                    printf 'niri-monitors: %s topology active\n' "$observed"
+                else
+                    printf 'niri-monitors: failed to apply %s topology\n' "$observed" >&2
+                fi
+            fi
+            candidate_topology=""
+            candidate_count=0
+        fi
     fi
 
     set_power_profile
