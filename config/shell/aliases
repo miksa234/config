@@ -1,0 +1,31 @@
+#!/bin/sh
+
+alias sudo="sudo "
+alias su="sudo -E su"
+alias ls="ls --color=auto"
+alias systemctl="systemctl --no-ask-password"
+alias shutdown="sudo shutdown -h now"
+alias reboot="sudo reboot"
+alias vim="nvim"
+alias fcd="cd \"./\$(find -type d | fzf)\""
+alias mbsync="mbsync -c $XDG_CONFIG_HOME/isync/mbsyncrc"
+alias tmux="tmux -f $XDG_CONFIG_HOME/tmux/tmux.conf"
+alias trr="transmission-remote"
+alias wget="wget --hsts-file=$XDG_CACHE_HOME/wget-hist"
+alias pdflatex="pdflatex --shell-escape"
+alias zathura="devour zathura"
+alias htop="sudo htop"
+alias multitex="latexmk -pdf -outdir=build"
+alias neomutt="TZ=Europe/Berlin neomutt"
+alias lf="lfub"
+alias l="lazygit"
+y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+	command rm -f -- "$tmp"
+}
+down() {
+	pgrep $1 | xargs kill -9
+}
